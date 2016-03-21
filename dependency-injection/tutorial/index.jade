@@ -1,0 +1,100 @@
+.chapter(data-title='Using Dependency Injection')
+    .step(data-title='What Untestable Code Looks Like', data-file='src/main/java/com/caseyscarborough/tutorial/testing/HardResource.java' data-highlight="9-18")
+        :markdown
+            ## What Untestable Code Looks Like
+
+            To begin, we'll show what untestable code looks like. Take a look at the method on the right. This is a standard JAX-RS `@GET` method, which retrieves some content from the database and returns it to the user.
+
+            This method is hard to test, because we can't actually test it without executing our database method. This is because the method will always execute `new Dao().getDatabaseContent()`.
+
+            So how can we fix this? By using dependency injection.
+
+    .step(data-title='What is Dependency Injection?', data-file='src/main/java/com/caseyscarborough/tutorial/testing/HardResource.java' data-highlight="9-18")
+        :markdown
+            ## What is Dependency Injection?
+
+            According to [Wikipedia](https://en.wikipedia.org/wiki/Dependency_injection), dependency injection is a software design pattern that implements inversion of control for resolving dependencies. In a nutshell, this means that any dependencies that a class has, should be provided, or "passed in", by the caller of the class.
+
+            Classes should not know the concrete type of their dependencies as well. Calls should not be static. Let's take a look at this class refactored to use dependency injection.
+
+    .step(data-title='Refactoring to Use Dependency Injection', data-file='src/main/java/com/caseyscarborough/tutorial/testing/EasyResource.java' data-highlight="9-25")
+        :markdown
+            ## Refactoring to Use Dependency Injection
+
+            The class has now been refactored to use dependency injection. The DAO class gets passed into this class from its constructor. For testing, we can pass in a "mock" version of our DAO class that doesn't actually execute tests on the database, and we can verify that this class itself performs it's duty by calling the DAO and returning its content.
+
+.chapter(data-title='Mocking a Dependency for Testing')
+    .step(data-title='Testing Using Manual Mocking', data-file='src/test/java/com/caseyscarborough/tutorial/testing/MockDao.java' data-highlight="5-11")
+        :markdown
+            ## Testing Using Manual Mocking
+
+            To begin testing our Resource class, we'll want to create a "mock" instance of our DAO class, one that doesn't actually execute any queries on the database.
+
+            On the right, we've created a new subclass of `Dao`, and overriden the `getDatabaseContent` method so that is just returns a static string, and it doesn't _actually_ execute anything on the database.
+
+            Now we can create our JUnit test to test our Resource method, and use this mock class for our DAO.
+    .step(data-title='Using our Mock Class in a Test', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceTest.java' data-highlight="12-24")
+        :markdown
+            ## Using our Mock Class in a Test
+
+            Now we've created our JUnit test, which creates a new instance of our `MockEasyToTestDao` and passes it into our resource class.
+
+            Once we've created our resource instance, we can execute the method and ensure that the content we retrieved was the content returned by our mock DAO class, without actually hitting the _real_ database.
+
+            This has correctly tested the functionality of our resource class, without testing the functionality of the DAO, which is a part of the definition of a unit test.
+    .step(data-title='Completion!', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceTest.java' data-highlight='0')
+        :markdown
+            ## Congratulations!
+
+            You've successfully seen how to refactor a class to use dependency injection, and how to write a mock instance of your class.
+
+            There's just one problem. Writing these manual mock classes is a pain, and will quickly bloat your code base if you'd like to test things like what happens when the `Dao` throws an exception, or when it returns different content. This is where [Mockito](http://mockito.org/) comes into play.
+
+            In the next section, we'll learn how to write tests for our resource class using Mockito to mock our `Dao` class.
+.chapter(data-title='Testing Using Mockito for Mocking Dependencies')
+    .step(data-title='Including Mockito In Your Project', data-file='build.gradle', data-highlight="16")
+        :markdown
+            ## Including Mockito In Your Project
+
+            If you're using Gradle, you can install Mockito into your project by adding the dependency on the right to your `build.gradle` file.
+
+            Otherwise, you can grab the latest version of the jar from [Maven Central](http://mvnrepository.com/artifact/org.mockito/mockito-core/1.10.19).
+    .step(data-title='Setting Up Your Test for Mockito', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceMockitoTest.java' data-highlight="21-28")
+        :markdown
+            ## Setting Up Your Test for Mockito
+
+            We've now moved our resource and DAO classes to be fields, and we've created a "setup" method where we can initialize these classes before every test is run.
+
+            The first thing we want to do is mock our `Dao` instance, which is done on line 26 by calling `mock(Dao.class)`.
+
+            Afterwards, we pass this mock instance into our resource class using dependency injection. We're now ready to start mocking.
+
+    .step(data-title='Writing a Test Using Mockito', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceMockitoTest.java' data-highlight="30-37")
+        :markdown
+            ## Writing a Test Using Mockito
+
+            We've rewritten our previous test using Mockito now, and you can see it's much simpler than writing a manually mocked class.
+
+            The first line of this method tells our "mock" instance what to return when the method is called. Now we can call our resource method and ensure that it returns whatever the `Dao` returns.
+    .step(data-title='Mocking an Error', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceMockitoTest.java' data-highlight="18-19,39-46")
+        :markdown
+            ## Mocking an Error
+
+            In this last example, we'll show how you can mock an exception being thrown from your `Dao` class.
+
+            The first line of this method tells the mock instance to throw a `RuntimeException` with the message "Database Error" when the DAO method is called.
+
+            Since we're not catching the exception in our resource method, we expect that this method will be thrown into our test, which we account for.
+
+            Running this test will show that it passes, and we receive the expected results.
+    .step(data-title='Finished', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceMockitoTest.java' data-highlight='0')
+        :markdown
+            ## Finished
+
+            The following are good resources on these topics:
+
+            * [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection)
+            * [Inversion of Control Containers and the Dependency Injection pattern - Martin Fowler](http://www.martinfowler.com/articles/injection.html)
+            * [Mockito Documentation](http://site.mockito.org/mockito/docs/current/org/mockito/Mockito.html)
+
+            That's all for now. Thanks for reading!
