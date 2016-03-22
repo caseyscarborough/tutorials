@@ -9,8 +9,9 @@ import org.junit.rules.ExpectedException;
 import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class EasyResourceMockitoTest {
@@ -34,6 +35,12 @@ public class EasyResourceMockitoTest {
         Response response = resource.getDatabaseContent();
         String databaseContent = response.getEntity().toString();
         assertEquals("Hello!", databaseContent);
+    }
+
+    @Test
+    public void testGetDatabaseContentCallsDao() throws Exception {
+        resource.getDatabaseContent();
+        verify(dao, times(1)).getDatabaseContent();
     }
 
     @Test

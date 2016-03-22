@@ -1,6 +1,6 @@
 {
     "title": "Using Dependency Injection to Write Testable Code",
-    "repo": "caseyscarborough/comingsoon",
+    "repo": "caseyscarborough/tutorials/tree/gh-pages/dependency-injection",
     "description": "This tutorial will walk you through using Dependency Injection to write more easily testable code, as well as how to test the newly refactored code using JUnit and Mockito, a mocking framework.",
     "heroku": false
 }

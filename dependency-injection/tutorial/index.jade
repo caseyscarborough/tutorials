@@ -42,15 +42,16 @@
             Once we've created our resource instance, we can execute the method and ensure that the content we retrieved was the content returned by our mock DAO class, without actually hitting the _real_ database.
 
             This has correctly tested the functionality of our resource class, without testing the functionality of the DAO, which is a part of the definition of a unit test.
-    .step(data-title='Completion!', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceTest.java' data-highlight='0')
+    .step(data-title='Completion', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceTest.java' data-highlight='0')
         :markdown
-            ## Congratulations!
+            ## Completion
 
             You've successfully seen how to refactor a class to use dependency injection, and how to write a mock instance of your class.
 
             There's just one problem. Writing these manual mock classes is a pain, and will quickly bloat your code base if you'd like to test things like what happens when the `Dao` throws an exception, or when it returns different content. This is where [Mockito](http://mockito.org/) comes into play.
 
             In the next section, we'll learn how to write tests for our resource class using Mockito to mock our `Dao` class.
+
 .chapter(data-title='Testing Using Mockito for Mocking Dependencies')
     .step(data-title='Including Mockito In Your Project', data-file='build.gradle', data-highlight="16")
         :markdown
@@ -76,7 +77,16 @@
             We've rewritten our previous test using Mockito now, and you can see it's much simpler than writing a manually mocked class.
 
             The first line of this method tells our "mock" instance what to return when the method is called. Now we can call our resource method and ensure that it returns whatever the `Dao` returns.
-    .step(data-title='Mocking an Error', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceMockitoTest.java' data-highlight="18-19,39-46")
+
+    .step(data-title='Verifying Methods are Called', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceMockitoTest.java' data-highlight="40-44")
+        :markdown
+            ## Verifying Methods are Called
+
+            Many times, you'd like to ensure that a method is actually called a certain number of times. You can do this with Mockito's `verify` method.
+
+            This test checks to make sure that the resource method actually calls the DAO method exactly one time.
+
+    .step(data-title='Mocking an Error', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceMockitoTest.java' data-highlight="19-20,46-53")
         :markdown
             ## Mocking an Error
 
@@ -87,9 +97,9 @@
             Since we're not catching the exception in our resource method, we expect that this method will be thrown into our test, which we account for.
 
             Running this test will show that it passes, and we receive the expected results.
-    .step(data-title='Finished', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceMockitoTest.java' data-highlight='0')
+    .step(data-title='Conclusion', data-file='src/test/java/com/caseyscarborough/tutorial/testing/EasyResourceMockitoTest.java' data-highlight='0')
         :markdown
-            ## Finished
+            ## Conclusion
 
             The following are good resources on these topics:
 
